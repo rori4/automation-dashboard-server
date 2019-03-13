@@ -1,9 +1,11 @@
 const express = require("express");
 const authCheck = require("../config/auth-check");
-const Book = require("../models/Amazon/Book");
+const Book = require("../models/Book/Book");
+const AmazonRank = require("../models/Book/AmazonRank");
 
 const router = new express.Router();
 
+//TODO: Validate Actual Book Submit!!!
 function validateBookCreateForm(payload) {
   const errors = {};
   let isFormValid = true;
@@ -61,15 +63,30 @@ function validateBookCreateForm(payload) {
   };
 }
 
-router.post("/add", authCheck, async (req, res, next) => {
+router.post("/save", authCheck, async (req, res, next) => {
   try {
     let book = req.body;
-    book.user = req.user;
-    let bookAdded = await Book.create(book);
-    await bookAdded.save();
+    const id = book._id;
+    let message;
+    if (!id) {
+      book.user = req.user;
+      let bookAdded = await Book.create(book);
+      let bookRank = await AmazonRank.create({
+        rank: book.salesRank,
+        book: bookAdded
+      });
+      bookAdded.rankHistory.push(bookRank);
+      await bookAdded.save();
+      message = "Amazon book added successfully!"
+    } else {
+      delete book._id;
+      // if(req.user._id !== book.user._id) throw Error("This is not your book") //TODO: ADMIN
+      let updatedBook = await Book.findOneAndUpdate({ _id: id }, book);
+      message = "Amazon book edited successfully!"
+    }
     return res.status(200).json({
       success: true,
-      message: "Amazon book added successfully!"
+      message
     });
   } catch (error) {
     console.log(error);
@@ -84,6 +101,45 @@ router.post("/add", authCheck, async (req, res, next) => {
   }
 });
 
+
+router.delete("/delete", authCheck, async (req, res, next) => {
+  try {
+    let bookId = req.query.id;;
+    await Book.findOneAndDelete(bookId)
+    return res.status(200).json({
+      success: true,
+      message: "Amazon book deleted successfully!"
+    });
+  } catch (error) {
+    console.log(error);
+    let message = "Something went wrong :( Check the form for errors.";
+    return res.status(200).json({
+      success: false,
+      message: message
+    });
+  }
+});
+
+router.get("/get", authCheck, async (req, res, next) => {
+  try {
+    let bookId = req.query.id;
+    let book = await Book.findOne({ _id: bookId, user: req.user }).populate(
+      "rankHistory"
+    );
+    return res.status(200).json({
+      success: true,
+      message: "Amazon book fetched successfully!",
+      book
+    });
+  } catch (error) {
+    let message = "Something went wrong :(";
+    return res.status(200).json({
+      success: false,
+      message: message
+    });
+  }
+});
+
 router.get("/list", authCheck, async (req, res) => {
   try {
     //TODO: Feth by user
@@ -91,13 +147,13 @@ router.get("/list", authCheck, async (req, res) => {
     let query =
       search !== ""
         ? {
-           user: req.user,
+            user: req.user,
             $or: [
-                {title: { $regex: search, $options: "i" }}, 
-                {authorName: { $regex: search, $options: "i" }},
-                {authorEmail: { $regex: search, $options: "i" }},
-                {keywords: { $regex: search, $options: "i" }}
-              ]
+              { title: { $regex: search, $options: "i" } },
+              { authorName: { $regex: search, $options: "i" } },
+              { authorEmail: { $regex: search, $options: "i" } },
+              { keywords: { $regex: search, $options: "i" } }
+            ]
           }
         : { user: req.user };
     let books = await Book.find(query);

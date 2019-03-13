@@ -10,6 +10,7 @@ const bookSchema = new mongoose.Schema({
     authorName: { type: mongoose.Schema.Types.String, required: true},
     authorEmail: { type: mongoose.Schema.Types.String, required: true},
     keywords: { type: mongoose.Schema.Types.String, required: true },
+    reviewsIframe: { type: mongoose.Schema.Types.String, required: true },
     user: {type: mongoose.Schema.Types.ObjectId, ref:'User', required: true},
     rankHistory: [{type: mongoose.Schema.Types.ObjectId, ref:'AmazonRank'}],
     promotions: [{type: mongoose.Schema.Types.ObjectId, ref:"BookPromotion"}]
