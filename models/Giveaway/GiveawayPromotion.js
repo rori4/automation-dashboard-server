@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const coursePromotionSchema = new mongoose.Schema({
-    course: {type: mongoose.Schema.Types.ObjectId, ref:'Course'},
+const giveawayPromotionSchema = new mongoose.Schema({
+    course: {type: mongoose.Schema.Types.ObjectId, ref:'Giveaway'},
     status: {type: mongoose.Schema.Types.String, default:"processing"},
-    submissions: [{type: mongoose.Schema.Types.ObjectId, ref:'CourseSubmission'}]
+    submissions: [{type: mongoose.Schema.Types.ObjectId, ref:'GiveawaySubmission'}]
 });
 
-const CoursePromotion = mongoose.model('CoursePromotion', coursePromotionSchema);
-module.exports = CoursePromotion;
+const GiveawayPromotion = mongoose.model('GiveawayPromotion', giveawayPromotionSchema);
+module.exports = GiveawayPromotion;

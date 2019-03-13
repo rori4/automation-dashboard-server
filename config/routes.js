@@ -1,6 +1,7 @@
 const authRoutes = require('../routes/auth')
 const bookRoutes = require('../routes/book')
 const courseRoutes = require('../routes/course')
+const giveawayRoutes = require('../routes/giveaway')
 const amazonRoutes = require('../routes/remoteAPI/amazon')
 const udemyRoutes = require('../routes/remoteAPI/udemy')
 
@@ -10,4 +11,5 @@ module.exports = (app) => {
   app.use('/udemy', udemyRoutes)
   app.use('/books', bookRoutes)
   app.use('/courses', courseRoutes)
+  app.use('/giveaways', giveawayRoutes)
 }

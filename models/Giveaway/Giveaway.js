@@ -2,16 +2,19 @@ const mongoose = require('mongoose');
 
 
 const giveawaySchema = new mongoose.Schema({
-    // title: { type: mongoose.Schema.Types.String, required: true, unique: true },
-    // synopsis: { type: mongoose.Schema.Types.String, required: true },
-    // authorBio: { type: mongoose.Schema.Types.String, required: true },
-    // bookCover: { type: mongoose.Schema.Types.String, required: true },
-    // amazonUrl: { type: mongoose.Schema.Types.String, required: true },
-    // authorEmail: { type: mongoose.Schema.Types.String, required: true },
-    // dateFrom: { type: mongoose.Schema.Types.Date, required: true },
-    // dateТо: { type: mongoose.Schema.Types.Date, required: true },
-    // user: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
-    // perma free ? or kindle unlimited promotion ?
+    title: { type: mongoose.Schema.Types.String, required: true, unique: true },
+    giveawayUrl: { type: mongoose.Schema.Types.String, required: true },
+    sponsorName: { type: mongoose.Schema.Types.String, required: true },
+    description: { type: mongoose.Schema.Types.String, required: true },
+    prize: { type: mongoose.Schema.Types.String, required: true },
+    courseCover: { type: mongoose.Schema.Types.String, required: true },
+    eligibility: { type: mongoose.Schema.Types.String, required: true },
+    prizeValue: { type: mongoose.Schema.Types.Number, required: true },
+    category: { type: mongoose.Schema.Types.String, required: true },
+    entryMethod: { type: mongoose.Schema.Types.String, required: true },
+    sponsorEmail: { type: mongoose.Schema.Types.String, required: true },
+    user: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
+    promotions: [{type: mongoose.Schema.Types.ObjectId, ref:'GiveawayPromotion'}]
 });
 
 const Giveaway = mongoose.model('Giveaway', giveawaySchema);

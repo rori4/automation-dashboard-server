@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 
-const courseSubmissionSchema = new mongoose.Schema({
+const giveawaySubmissionSchema = new mongoose.Schema({
   createdOn: { type: mongoose.Schema.Types.Date, default: Date.now },
   website: { type: mongoose.Schema.Types.String, required: true },
   result: { type: mongoose.Schema.Types.String, required: true },
   screenshots: [{ type: mongoose.Schema.Types.String }],
   error: { type: mongoose.Schema.Types.String },
-  coursePromotion: { type: mongoose.Schema.Types.ObjectId, ref: "CoursePromotion" },
+  coursePromotion: { type: mongoose.Schema.Types.ObjectId, ref: "GiveawayPromotopn" },
 });
 
-const courseSubmission = mongoose.model("CourseSubmission", courseSubmissionSchema);
-module.exports = courseSubmission;
+const GiveawaySubmission = mongoose.model("GiveawaySubmission", giveawaySubmissionSchema);
+module.exports = GiveawaySubmission;
   
