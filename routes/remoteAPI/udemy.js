@@ -23,7 +23,7 @@ router.post("/info", async (req, res) => {
           title: course.title,
           instructorName: course.visible_instructors[0].display_name,
           summary: htmlToTextFormat(course.description),
-          courseCover: course.image_480x270,
+          cover: course.image_480x270,
           price: course.price ? course.price : "FREE",
           numberOfReviews: course.num_reviews
         };

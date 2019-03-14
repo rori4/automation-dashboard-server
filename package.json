@@ -12,6 +12,7 @@
   "dependencies": {
     "amazon-product-api": "^0.4.4",
     "body-parser": "^1.18.3",
+    "cloudinary": "^1.13.2",
     "cookie-parser": "1.4.3",
     "cors": "2.8.4",
     "express": "^4.16.4",

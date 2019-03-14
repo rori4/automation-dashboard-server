@@ -1,6 +1,7 @@
 const express = require("express");
 const authCheck = require("../config/auth-check");
 const Book = require("../models/Book/Book");
+const BookPromotion = require("../models/Book/BookPromotion");
 const AmazonRank = require("../models/Book/AmazonRank");
 
 const router = new express.Router();
@@ -140,6 +141,41 @@ router.get("/get", authCheck, async (req, res, next) => {
   }
 });
 
+router.post("/promotion", authCheck, async (req, res, next) => {
+  try {
+    let bookPromotion = req.body;
+    const id = bookPromotion._id;
+    let message;
+    if (!id) {
+      let book = await Book.findOne(bookPromotion.book);
+      bookPromotion.book = book;
+      let promotion = await BookPromotion.create(bookPromotion);
+      await promotion.save();
+      message = "Book promotion added successfully!";
+    } else {
+      delete bookPromotion._id;
+      // if(req.user._id !== book.user._id) throw Error("This is not your book") //TODO: ADMIN
+      await Book.findOneAndUpdate({ _id: id }, bookPromotion);
+      message = "Book edited successfully!";
+    }
+    return res.status(200).json({
+      success: true,
+      message
+    });
+  } catch (error) {
+    console.log(error);
+    let message = "Something went wrong :( Check the form for errors.";
+    if (error.code === 11000) {
+      message = "Book with the given name already exists.";
+    }
+    return res.status(200).json({
+      success: false,
+      message: message
+    });
+  }
+});
+
+
 router.get("/list", authCheck, async (req, res) => {
   try {
     //TODO: Feth by user
@@ -161,6 +197,38 @@ router.get("/list", authCheck, async (req, res) => {
       success: true,
       message: "Books fetched successfully",
       data: books
+    });
+  } catch (error) {
+    console.log(error);
+    const message = "Something went wrong when fetching data :(";
+    return res.status(200).json({
+      success: false,
+      message: message
+    });
+  }
+});
+
+router.get("/list", authCheck, async (req, res) => {
+  try {
+    //TODO: Feth by user
+    let search = req.query.search;
+    let query =
+      search !== ""
+        ? {
+            user: req.user,
+            $or: [
+              { title: { $regex: search, $options: "i" } },
+              { authorName: { $regex: search, $options: "i" } },
+              { authorEmail: { $regex: search, $options: "i" } },
+              { keywords: { $regex: search, $options: "i" } }
+            ]
+          }
+        : { user: req.user };
+    let promotions = await BookPromotion.find(query).populate('Book');
+    return res.status(200).json({
+      success: true,
+      message: "Promotions fetched successfully",
+      data: promotions
     });
   } catch (error) {
     console.log(error);

@@ -21,7 +21,7 @@ router.post("/info", async (req, res) => {
       title: result[0].ItemAttributes[0].Title[0],
       authorName: result[0].ItemAttributes[0].Author[0],
       synopsis: result[0].EditorialReviews[0].EditorialReview[0].Content[0],
-      bookCover: result[0].LargeImage[0].URL[0],
+      cover: result[0].LargeImage[0].URL[0],
       salesRank: result[0].SalesRank ? result[0].SalesRank[0] : "FREE",
       reviewsIframe: result[0].CustomerReviews[0].IFrameURL[0]
     };
