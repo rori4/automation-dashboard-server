@@ -9,7 +9,7 @@ const client = amazon.createClient({
 
 router.post("/info", async (req, res) => {
   const regex = /dp\/(.*?)\//gm;
-  let resultRegex = regex.exec(req.body.amazonUrl);
+  let resultRegex = regex.exec(req.body.url);
   try {
     if (resultRegex === null) throw Error("Invalid Url Provided");
     let asin = resultRegex[1];

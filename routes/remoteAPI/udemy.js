@@ -10,7 +10,7 @@ udemyApiClient = new Udemy(
 
 router.post("/info", async (req, res) => {
   const regex = /udemy.com\/(.*?)\//gm;
-  let resultRegex = regex.exec(req.body.udemyUrl);
+  let resultRegex = regex.exec(req.body.url);
   try {
     if (resultRegex === null) throw Error("Invalid Url Provided");
     let course = resultRegex[1];

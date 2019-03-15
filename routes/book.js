@@ -72,18 +72,20 @@ router.post("/save", authCheck, async (req, res, next) => {
     if (!id) {
       book.user = req.user;
       let bookAdded = await Book.create(book);
-      let bookRank = await AmazonRank.create({
-        rank: book.salesRank,
-        book: bookAdded
-      });
-      bookAdded.rankHistory.push(bookRank);
+      if (book.salesRank !== "FREE") {
+        let bookRank = await AmazonRank.create({
+          rank: book.salesRank,
+          book: bookAdded
+        });
+        bookAdded.rankHistory.push(bookRank);
+      }
       await bookAdded.save();
-      message = "Amazon book added successfully!"
+      message = "Amazon book added successfully!";
     } else {
       delete book._id;
       // if(req.user._id !== book.user._id) throw Error("This is not your book") //TODO: ADMIN
       let updatedBook = await Book.findOneAndUpdate({ _id: id }, book);
-      message = "Amazon book edited successfully!"
+      message = "Amazon book edited successfully!";
     }
     return res.status(200).json({
       success: true,
@@ -102,11 +104,10 @@ router.post("/save", authCheck, async (req, res, next) => {
   }
 });
 
-
 router.delete("/delete", authCheck, async (req, res, next) => {
   try {
-    let bookId = req.query.id;;
-    await Book.findOneAndDelete(bookId)
+    let bookId = req.query.id;
+    await Book.findOneAndDelete(bookId);
     return res.status(200).json({
       success: true,
       message: "Amazon book deleted successfully!"
@@ -175,7 +176,6 @@ router.post("/promotion", authCheck, async (req, res, next) => {
   }
 });
 
-
 router.get("/list", authCheck, async (req, res) => {
   try {
     //TODO: Feth by user
@@ -187,7 +187,7 @@ router.get("/list", authCheck, async (req, res) => {
             $or: [
               { title: { $regex: search, $options: "i" } },
               { authorName: { $regex: search, $options: "i" } },
-              { authorEmail: { $regex: search, $options: "i" } },
+              { email: { $regex: search, $options: "i" } },
               { keywords: { $regex: search, $options: "i" } }
             ]
           }
@@ -224,7 +224,7 @@ router.get("/list", authCheck, async (req, res) => {
             ]
           }
         : { user: req.user };
-    let promotions = await BookPromotion.find(query).populate('Book');
+    let promotions = await BookPromotion.find(query).populate("Book");
     return res.status(200).json({
       success: true,
       message: "Promotions fetched successfully",
