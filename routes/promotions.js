@@ -92,22 +92,9 @@ router.get("/get", authCheck, async (req, res, next) => {
 router.get("/list", authCheck, async (req, res) => {
   try {
     //TODO: Feth by user
-    let search = req.query.search;
     let type = req.query.type;
-    let Model = retrieveTypePromotion(req.query.type);
-    let query =
-      search !== ""
-        ? {
-            user: req.user,
-            $or: [
-              { [type.title]: { $regex: search, $options: "i" } },
-              { [type.authorName]: { $regex: search, $options: "i" } },
-              { [type.authorEmail]: { $regex: search, $options: "i" } },
-              { [type.keywords]: { $regex: search, $options: "i" } }
-            ]
-          }
-        : { user: req.user };
-    let books = await Model.find(query).populate(type).sort('-date');
+    let Model = retrieveTypePromotion(type);
+    let books = await Model.find({ user: req.user }).populate(type);
     return res.status(200).json({
       success: true,
       message: "Promotions fetched successfully",
@@ -123,37 +110,37 @@ router.get("/list", authCheck, async (req, res) => {
   }
 });
 
-router.get("/list", authCheck, async (req, res) => {
-  try {
-    //TODO: Feth by user
-    let search = req.query.search;
-    let query =
-      search !== ""
-        ? {
-            user: req.user,
-            $or: [
-              { title: { $regex: search, $options: "i" } },
-              { authorName: { $regex: search, $options: "i" } },
-              { authorEmail: { $regex: search, $options: "i" } },
-              { keywords: { $regex: search, $options: "i" } }
-            ]
-          }
-        : { user: req.user };
-    let promotions = await BookPromotion.find(query).populate("Book");
-    return res.status(200).json({
-      success: true,
-      message: "Promotions fetched successfully",
-      data: promotions
-    });
-  } catch (error) {
-    console.log(error);
-    const message = "Something went wrong when fetching data :(";
-    return res.status(200).json({
-      success: false,
-      message: message
-    });
-  }
-});
+// router.get("/list", authCheck, async (req, res) => {
+//   try {
+//     //TODO: Feth by user
+//     let search = req.query.search;
+//     let query =
+//       search !== ""
+//         ? {
+//             user: req.user,
+//             $or: [
+//               { title: { $regex: search, $options: "i" } },
+//               { authorName: { $regex: search, $options: "i" } },
+//               { authorEmail: { $regex: search, $options: "i" } },
+//               { keywords: { $regex: search, $options: "i" } }
+//             ]
+//           }
+//         : { user: req.user };
+//     let promotions = await BookPromotion.find(query).populate("Book");
+//     return res.status(200).json({
+//       success: true,
+//       message: "Promotions fetched successfully",
+//       data: promotions
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     const message = "Something went wrong when fetching data :(";
+//     return res.status(200).json({
+//       success: false,
+//       message: message
+//     });
+//   }
+// });
 
 function retrieveTypePromotion(type) {
   switch (type) {

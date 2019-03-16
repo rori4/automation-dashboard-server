@@ -12,7 +12,7 @@ module.exports = new PassportLocalStrategy({
   const user = {
     email: email.trim(),
     password: password.trim(),
-    username: req.body.username.trim()
+    username: req.body.username.trim(),
   }
 
   User
@@ -24,7 +24,7 @@ module.exports = new PassportLocalStrategy({
 
       user.salt = encryption.generateSalt()
       user.password = encryption.generateHashedPassword(user.salt, user.password)
-      user.roles = []
+      user.roles = ["User"]
 
       User
         .create(user)

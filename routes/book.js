@@ -208,27 +208,26 @@ router.get("/list", authCheck, async (req, res) => {
   }
 });
 
-router.get("/list", authCheck, async (req, res) => {
+router.get("/all", authCheck, async (req, res) => {
   try {
     //TODO: Feth by user
     let search = req.query.search;
     let query =
       search !== ""
         ? {
-            user: req.user,
             $or: [
               { title: { $regex: search, $options: "i" } },
               { authorName: { $regex: search, $options: "i" } },
-              { authorEmail: { $regex: search, $options: "i" } },
+              { email: { $regex: search, $options: "i" } },
               { keywords: { $regex: search, $options: "i" } }
             ]
           }
-        : { user: req.user };
-    let promotions = await BookPromotion.find(query).populate("Book");
+        : { };
+    let books = await Book.find(query);
     return res.status(200).json({
       success: true,
-      message: "Promotions fetched successfully",
-      data: promotions
+      message: "Books fetched successfully",
+      data: books
     });
   } catch (error) {
     console.log(error);

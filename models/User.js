@@ -7,6 +7,7 @@ let userSchema = new mongoose.Schema({
   email: {type: String, required: REQUIRED_VALIDATION_MESSAGE, unique: true},
   username: {type: String, required: REQUIRED_VALIDATION_MESSAGE},
   createdOn: {type: Date, default: Date.now},
+  status: {type: String, default: 'active'},
   salt: String,
   password: String,
   roles: [String]

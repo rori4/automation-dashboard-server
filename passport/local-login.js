@@ -22,6 +22,12 @@ module.exports = new PassportLocalStrategy({
         return done(error)
       }
 
+      if(user.status === "banned"){
+        const error = new Error("You have been banned")
+        error.name = 'IncorrectCredentialsError'
+        return done(error)
+      }
+
       const payload = {
         sub: user.id
       }

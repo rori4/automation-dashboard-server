@@ -110,4 +110,35 @@ router.get("/list", authCheck, async (req, res) => {
   }
 });
 
+router.get("/all", authCheck, async (req, res) => {
+  try {
+    //TODO: Feth by user
+    let search = req.query.search;
+    let query =
+      search !== ""
+        ? {
+            $or: [
+              { title: { $regex: search, $options: "i" } },
+              { prize: { $regex: search, $options: "i" } },
+              { sponsorName: { $regex: search, $options: "i" } },
+              { sponsorEmail: { $regex: search, $options: "i" } }
+            ]
+          }
+        : { };
+    let books = await Giveaway.find(query);
+    return res.status(200).json({
+      success: true,
+      message: "Giveaways fetched successfully",
+      data: books
+    });
+  } catch (error) {
+    console.log(error);
+    const message = "Something went wrong when fetching data :(";
+    return res.status(200).json({
+      success: false,
+      message: message
+    });
+  }
+});
+
 module.exports = router;
